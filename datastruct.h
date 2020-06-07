@@ -3,21 +3,66 @@
 #include <QString>
 #include <QVector>
 #include <QMap>
+namespace trace {
+
+enum OrderStatus {
+    OnError =-1,
+    OnBegin = 0,
+    OnSendOrder,
+    OnEnd,
+    OnSendOrderAns,
+    OnOrderPush,
+    OnContiune = 100,
+};
+}
 class SendOrder {
 public:
     QString strTime;
+    QString strETime;
     QString orderRef;
     QString fileName;
-    SendOrder(QString time,QString ref,QString name):strTime(time),orderRef(ref),fileName(name){}
-
+    SendOrder(QString time = "",QString eTime = "", QString ref = "", QString name =""):strTime(time),strETime(eTime),orderRef(ref),fileName(name){}
+    void clear()
+    {
+        strTime.clear();
+        orderRef.clear();
+        fileName.clear();
+        strETime.clear();
+    }
 };
+
 class SendOrderAns {
 public:
     QString strTime;
     QString orderRef;
     QString orderID;
-    SendOrderAns(QString time, QString ref, QString id):strTime(time),orderRef(ref),orderID(id){}
+    QString strETime;
+    bool BStatus;
+    SendOrderAns(QString time = "", QString eTime = "",QString ref = "", QString id = "",bool status = false):strTime(time),strETime(eTime), orderRef(ref),orderID(id),BStatus(status){}
+    void clear() {
+        strTime.clear();
+        orderRef.clear();
+        orderID.clear();
+        strETime.clear();
+    }
 };
+class OrderPush {
+  public:
+    QString strTime;
+    QString orderID;
+    bool BStatus;
+    OrderPush(QString time ="", QString id = "", bool status = false):strTime(time),orderID(id),BStatus(status){}
+    void clear(){
+        strTime.clear();
+        orderID.clear();
+        BStatus = false;
+    }
+};
+
+typedef QMap<QString,SendOrder> SendOrderCache;
+
+typedef QMap<QString,SendOrderAns> SendOrderAnsCache;
+
 const QMap<QString, bool> OrderDone={
     {"-1", false},
     {"0", false},
@@ -45,4 +90,5 @@ const QMap<QString, bool> AlgoDone ={
     {"69", false},
     {"6", false}
 };
+
 #endif // DATASTRUCT_H

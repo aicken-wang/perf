@@ -1,0 +1,49 @@
+    static readonly isOrderDone = {
+        "-1": false,
+        "0": false,
+        "1": false,
+        "2": false,
+        "3": false,
+        "4": false,
+        "5": true,
+        "6": true,
+        "7": false,
+        "8": true,
+        "9": true,
+        "40": true,
+    };
+    
+    
+    static isAlgoDone = {
+        // "0": false,
+        "49": false,
+        "48": false,
+        "50": true,
+        "52": true,
+        "54": false,
+        "56": true,
+        "57": false,
+        "65": false,
+        "67": true,
+        "69": false,
+        "6": false
+    };
+
+
+[2020-03-25 11:22:09.144] [WARN] alert - begin file:ORDER.20200325112210130_thddc51.csv, time=1585106530144
+[2020-03-25 11:22:09.145] [INFO] alert - SendOrder: ref=9350942721,key=0:1120004,time=1585106530145, delay=1
+[2020-03-25 11:22:09.145] [WARN] alert - end file:ORDER.20200325112210130_thddc5.csv, time=1585106530145
+
+[2020-03-25 11:22:09.248] [INFO] alert - SendOrderAns : ref=9350942721, id=66484186608325138331, time=1585106530248
+
+[2020-03-25 11:22:09.249] [INFO] alert - OrderPush: id=66484186608325138331, status=40
+
+[2020-03-25 11:22:11.144] [WARN] alert - begin file:ORDER.20200325112210130_thddc52.csv, time=1585106530144
+[2020-03-25 11:22:11.145] [INFO] alert - SendOrder: ref=935094272,key=0:1120004,time=1585106530145, delay=1
+[2020-03-25 11:22:11.145] [WARN] alert - end file:ORDER.20200325112210130_thddc5.csv, time=1585106530145
+
+[2020-03-25 11:22:11.248] [INFO] alert - SendOrderAns : ref=935094272, id=6648418660832513833, time=1585106530248
+
+[2020-03-25 11:22:11.249] [INFO] alert - OrderPush: id=6648418660832513833, status=40
+
+

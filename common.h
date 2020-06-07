@@ -9,6 +9,7 @@
 #include <QLabel>
 #include <QTimer>
 #include <cmath>
+#include <QDebug>
 namespace trace{
 #define A2W  QString::fromLocal8Bit
 }

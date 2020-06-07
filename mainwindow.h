@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include <QString>
+#include "datastruct.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -29,7 +31,7 @@ private:
     void processSendOrder(QString &time, QString  &ref, QString &strLine);
     void processEnd(QString &time, QString & file, QString &strLine);
     void processSendOrderAns(QString &ansTime, QString &ansRef,QString &ansID, QString &strLine);
-    void processOrderPush(QString &OPtime, QString &OPID, QString &OPStatus, QString &strLine);
+    void processOrderPush(QString &OPtime, QString &OPID, bool OPStatus, QString &strLine);
     void showText();
 
 public slots:
@@ -41,20 +43,25 @@ private:
     QString m_lastFolder;
     int m_state;
 
-    QString m_stime;
-    QString m_time;
+    QString m_sTime;
+    QString m_eTime;
     QString m_ref;
     QString m_file;
 
     QString m_ansRef;
     QString m_ansID;
-    QString m_sAnsTime;
-    QString m_ansTime;
+    QString m_ansSTime;
 
     QString m_OPTime;
     QString m_OPID;
-    QString m_OPStatus;
-    //记录结果
+    bool m_OPStatus;
+
+    SendOrderCache m_sendOrderCache;
+    SendOrderAnsCache m_sendOrderAnsCache;
+    SendOrder m_SendOrder;
+    SendOrderAns m_SendOrderAns;
+    OrderPush m_OrderPush;
+
     int m_orderCount;
     qint64 m_orderMax;
     qint64 m_orderMin;
