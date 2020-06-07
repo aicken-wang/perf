@@ -20,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_orderCount = 0;
     m_diffAvg = 0;
     m_diffSum = 0;
+    m_scannerCount =0;
 
 }
 
@@ -57,6 +58,7 @@ bool MainWindow::onReadLine(const QString &filePath)
     {
         QByteArray line =file.readLine();
         QString strLine(line);
+        if(strLine.length() < 12) continue;
         processText(strLine);
         QCoreApplication::processEvents();
         QThread::usleep(500);
@@ -71,8 +73,6 @@ void MainWindow::onParseStringLine(const QString &str)
     QString strTmp(str);
     if(str.contains("begin")) {
         m_state = OnBegin;
-        QString html=QString("<span style='color:green'> 第 %1 单</span>").arg(m_orderCount +1);
-        this->ui->plainTextEdit->appendHtml(html);
         processBegin(m_sTime,m_file, strTmp);
     }
     else if(str.indexOf("SendOrderAns") > -1) {
@@ -121,6 +121,7 @@ void MainWindow::processText(QString &strLine)
         m_state = OnContiune;
         m_SendOrder.strTime = m_sTime;
         m_SendOrder.fileName = m_file;
+        ++m_scannerCount;
         break;
     }
     case OnSendOrder:{
@@ -132,6 +133,8 @@ void MainWindow::processText(QString &strLine)
     case OnEnd:
     {
         //by ref
+        QString html=QString("<span style='color:green'> 第 %1 单</span>").arg(m_scannerCount);
+        this->ui->plainTextEdit->appendHtml(html);
         QString str = QString("扫单开始时间: [%0],扫单完成时间:[%1] Ref:[%2], 下单文件:[%3]").arg(m_sTime).arg(m_eTime).arg(m_ref).arg(m_file);
         m_SendOrder.strETime = m_eTime;
         if(!m_SendOrder.orderRef.isEmpty())
@@ -168,7 +171,8 @@ void MainWindow::processText(QString &strLine)
         m_SendOrderAns.orderID = m_OPID;
         m_sendOrderAnsCache[m_OPID] = m_SendOrderAns;
         if(m_OPStatus) {
-            if(m_sendOrderAnsCache.find(m_OrderPush.orderID)== m_sendOrderAnsCache.end())
+            auto it_SOA = m_sendOrderAnsCache.find(m_OrderPush.orderID);
+            if(it_SOA == m_sendOrderAnsCache.end())
             {
                 //drop
                 QString html=QString("<span style='color:red'>回单缓存中未找到订单ID:%1 </span>").arg(m_OrderPush.orderID);
@@ -176,15 +180,14 @@ void MainWindow::processText(QString &strLine)
                 return;
             }
             SendOrderAns SOA =  m_sendOrderAnsCache[m_OrderPush.orderID];
-
-            if(m_sendOrderCache.find(SOA.orderRef) == m_sendOrderCache.end()) {
+            auto it_SO = m_sendOrderCache.find(SOA.orderRef);
+            if( it_SO == m_sendOrderCache.end()) {
                 m_state = OnError;
                 QString html=QString("<span style='color:red'>下单缓存中未找到订单Ref:%1 </span>").arg(m_SendOrderAns.orderRef);
                 this->ui->plainTextEdit->appendHtml(html);
                 return;
             }
             SendOrder SO = m_sendOrderCache[SOA.orderRef];
-            qDebug() <<"SO ref " <<SO.strTime  << "SOA "<< SOA.strETime;
             QDateTime start = QDateTime::fromString(SO.strTime, "yyyy-MM-dd hh:mm:ss.zzz");
             QDateTime end = QDateTime::fromString(SOA.strETime, "yyyy-MM-dd hh:mm:ss.zzz");
             qint64 s1 = start.toMSecsSinceEpoch();
@@ -199,6 +202,9 @@ void MainWindow::processText(QString &strLine)
             ++ m_orderCount;
             QString html=QString("<span style='color:red'>订单处理完成</span>");
             this->ui->plainTextEdit->appendHtml(html);
+            //clear
+            m_sendOrderAnsCache.erase(it_SOA);
+            m_sendOrderCache.erase(it_SO);
         }
         m_SendOrderAns.BStatus = m_OPStatus;
         m_sendOrderAnsCache[m_ansRef] = m_SendOrderAns;
@@ -252,7 +258,7 @@ void MainWindow::processSendOrderAns(QString &ansTime, QString &ansRef, QString 
     parseIDValue(ansID,strLine);
 }
 
-void MainWindow::processOrderPush(QString &OPtime, QString &OPID, bool OPStatus, QString &strLine)
+void MainWindow::processOrderPush(QString &OPtime, QString &OPID, bool &OPStatus, QString &strLine)
 {
     parseStrLineTime(OPtime,strLine);
     parseIDValue(OPID, strLine);
@@ -287,6 +293,8 @@ void MainWindow::onClickedViewBtn()
     if(m_filename.isEmpty())
        QMessageBox::critical(this,"ERROR","open file failed...");
     this->ui->logPathLine->setText(m_filename);
+    m_scannerCount = 0;
+    this->ui->plainTextEdit->clear();
     if(!onReadLine(m_filename)) return;
     showText();
 }

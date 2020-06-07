@@ -34,9 +34,9 @@ public:
 class SendOrderAns {
 public:
     QString strTime;
+    QString strETime;
     QString orderRef;
     QString orderID;
-    QString strETime;
     bool BStatus;
     SendOrderAns(QString time = "", QString eTime = "",QString ref = "", QString id = "",bool status = false):strTime(time),strETime(eTime), orderRef(ref),orderID(id),BStatus(status){}
     void clear() {

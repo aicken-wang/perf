@@ -31,7 +31,7 @@ private:
     void processSendOrder(QString &time, QString  &ref, QString &strLine);
     void processEnd(QString &time, QString & file, QString &strLine);
     void processSendOrderAns(QString &ansTime, QString &ansRef,QString &ansID, QString &strLine);
-    void processOrderPush(QString &OPtime, QString &OPID, bool OPStatus, QString &strLine);
+    void processOrderPush(QString &OPtime, QString &OPID, bool &OPStatus, QString &strLine);
     void showText();
 
 public slots:
@@ -67,5 +67,6 @@ private:
     qint64 m_orderMin;
     qint64 m_diffSum;
     qint64 m_diffAvg;
+    int m_scannerCount;
 };
 #endif // MAINWINDOW_H
